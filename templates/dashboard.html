@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 style="margin-top:0;font-size:1.5rem;">Dashboard</h1>
+<p class="muted">Resumen del inventario</p>
+
+<div class="cards">
+  <div class="card">
+    <h3>Productos</h3>
+    <div class="value">{{ total_productos }}</div>
+  </div>
+  <div class="card">
+    <h3>Stock bajo (&lt;5)</h3>
+    <div class="value" style="{% if stock_bajo %}color: #ffb86b{% endif %}">{{ stock_bajo }}</div>
+  </div>
+  <div class="card">
+    <h3>Valor inventario</h3>
+    <div class="value" style="font-size:1.25rem;">{{ "%.2f"|format(valor_inventario|float) }} €</div>
+  </div>
+</div>
+
+<h2 style="font-size:1.1rem;margin-bottom:0.75rem;">Últimos productos</h2>
+{% if productos_recientes %}
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Categoría</th>
+      <th>Precio</th>
+      <th>Stock</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in productos_recientes %}
+    <tr>
+      <td>{{ p.nombre }}</td>
+      <td>{{ p.categoria }}</td>
+      <td>{{ "%.2f"|format(p.precio|float) }} €</td>
+      <td>
+        {{ p.stock }}
+        {% if p.stock < 5 %}<span class="badge-low">(bajo)</span>{% endif %}
+      </td>
+      <td class="row-actions">
+        <a href="/productos/{{ p.id }}/editar">Editar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="muted">No hay productos. <a href="/productos/nuevo">Crear el primero</a>.</p>
+{% endif %}
+{% endblock %}
