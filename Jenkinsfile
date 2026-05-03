@@ -14,40 +14,39 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh """
-                python3 -m venv $PYTHON_ENV
-                . $PYTHON_ENV/bin/activate
-                pip install -r requirements.txt
+                bat """
+                python -m venv %PYTHON_ENV%
+                call %PYTHON_ENV%\\Scripts\\activate && pip install -r requirements.txt
                 """
             }
         }
 
         stage('Static Analysis & Linting') {
             steps {
-                sh """
-                . $PYTHON_ENV/bin/activate
-                pip install flake8
-                flake8 . --exclude=$PYTHON_ENV --count --select=E9,F63,F7,F82 --show-source --statistics
+                bat """
+                call %PYTHON_ENV%\\Scripts\\activate && pip install flake8 && flake8 . --exclude=%PYTHON_ENV% --count --select=E9,F63,F7,F82 --show-source --statistics
                 """
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh """
-                . $PYTHON_ENV/bin/activate
-                pip install pytest
-                pytest
+                bat """
+                call %PYTHON_ENV%\\Scripts\\activate && pip install pytest && pytest
                 """
             }
         }
 
         stage('Deploy (Local)') {
             steps {
-                sh """
-                . $PYTHON_ENV/bin/activate
-                pkill uvicorn || true
-                nohup uvicorn main:app --host 0.0.0.0 --port 8000 > output.log 2>&1 &
+                bat """
+                @echo off
+                :: Intenta cerrar uvicorn si ya está corriendo, si no, ignora el error
+                taskkill /F /IM uvicorn.exe /T 2>nul || echo Uvicorn no estaba en ejecucion.
+                
+                :: Lanza uvicorn en segundo plano
+                call %PYTHON_ENV%\\Scripts\\activate && start /B uvicorn main:app --host 0.0.0.0 --port 8000 > output.log 2>&1
+                echo Aplicacion desplegada en http://localhost:8000
                 """
             }
         }
@@ -61,7 +60,7 @@ pipeline {
             echo '¡El pipeline se completó exitosamente!'
         }
         failure {
-            echo 'El pipeline falló. Revisa los logs.'
+            echo 'El pipeline falló. Revisa la consola de Jenkins.'
         }
     }
 }
