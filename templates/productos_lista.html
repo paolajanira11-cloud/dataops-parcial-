@@ -9,6 +9,7 @@
 </div>
 
 {% if productos %}
+<div class="table-scroll">
 <table>
   <thead>
     <tr>
@@ -25,7 +26,7 @@
       <td>
         <strong>{{ p.nombre }}</strong>
         {% if p.descripcion %}
-        <div class="muted" style="font-size:0.82rem;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:0.2rem;">{{ p.descripcion }}</div>
+        <div class="cell-muted">{{ p.descripcion }}</div>
         {% endif %}
       </td>
       <td><span class="badge">{{ p.categoria.nombre }}</span></td>
@@ -44,6 +45,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
   <p>No hay productos registrados.</p>

@@ -30,8 +30,9 @@
   </div>
 </div>
 
-<h2 style="font-size:1.15rem;margin-bottom:0.85rem;font-weight:600;">Últimos productos</h2>
+<h2 class="section-title">Últimos productos</h2>
 {% if productos_recientes %}
+<div class="table-scroll">
 <table>
   <thead>
     <tr>
@@ -59,6 +60,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
   <p>No hay productos todavía.</p>
