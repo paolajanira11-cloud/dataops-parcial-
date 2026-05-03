@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 style="margin-top:0;font-size:1.5rem;">Productos</h1>
-<p class="muted">Listado con altas, bajas y modificaciones</p>
+<div class="page-head">
+  <div>
+    <h1>Productos</h1>
+    <p class="lead">Altas, bajas y modificaciones. Cada producto pertenece a una categoría.</p>
+  </div>
+  <a class="btn btn-primary" href="/productos/nuevo">+ Nuevo producto</a>
+</div>
 
 {% if productos %}
 <table>
   <thead>
     <tr>
-      <th>Nombre</th>
+      <th>Producto</th>
       <th>Categoría</th>
       <th>Precio</th>
       <th>Stock</th>
-      <th style="width:180px;">Acciones</th>
+      <th style="min-width:160px;">Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -20,19 +25,19 @@
       <td>
         <strong>{{ p.nombre }}</strong>
         {% if p.descripcion %}
-        <div class="muted" style="font-size:0.85rem;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ p.descripcion }}</div>
+        <div class="muted" style="font-size:0.82rem;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:0.2rem;">{{ p.descripcion }}</div>
         {% endif %}
       </td>
-      <td>{{ p.categoria }}</td>
+      <td><span class="badge">{{ p.categoria.nombre }}</span></td>
       <td>{{ "%.2f"|format(p.precio|float) }} €</td>
       <td>
         {{ p.stock }}
         {% if p.stock < 5 %}<span class="badge-low">bajo</span>{% endif %}
       </td>
       <td class="row-actions">
-        <a class="btn btn-ghost" href="/productos/{{ p.id }}/editar" style="padding:0.3rem 0.55rem;font-size:0.8rem;">Editar</a>
+        <a class="btn btn-ghost btn-sm" href="/productos/{{ p.id }}/editar">Editar</a>
         <form class="inline" action="/productos/{{ p.id }}/eliminar" method="post" onsubmit="return confirm('¿Eliminar este producto?');">
-          <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.55rem;font-size:0.8rem;">Eliminar</button>
+          <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
         </form>
       </td>
     </tr>
@@ -40,7 +45,9 @@
   </tbody>
 </table>
 {% else %}
-<p class="muted">No hay productos registrados.</p>
-<p><a class="btn btn-primary" href="/productos/nuevo">Añadir producto</a></p>
+<div class="empty-state">
+  <p>No hay productos registrados.</p>
+  <p style="margin-top:0.75rem;"><a class="btn btn-primary" href="/productos/nuevo">Añadir producto</a></p>
+</div>
 {% endif %}
 {% endblock %}

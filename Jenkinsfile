@@ -32,7 +32,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 bat """
-                call %PYTHON_ENV%\\Scripts\\activate && pip install pytest && pytest
+                call %PYTHON_ENV%\\Scripts\\activate && pytest
                 """
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                 taskkill /F /IM uvicorn.exe /T 2>nul || echo Uvicorn no estaba en ejecucion.
                 
                 :: Lanza uvicorn en segundo plano
-                call %PYTHON_ENV%\\Scripts\\activate && start /B uvicorn main:app --host 0.0.0.0 --port 8000 > output.log 2>&1
+                call %PYTHON_ENV%\\Scripts\\activate && start /B uvicorn app.main:app --host 0.0.0.0 --port 8000 > output.log 2>&1
                 echo Aplicacion desplegada en http://localhost:8000
                 """
             }

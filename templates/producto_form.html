@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 style="margin-top:0;font-size:1.5rem;">{% if producto %}Editar producto{% else %}Nuevo producto{% endif %}</h1>
+<div class="page-head">
+  <div>
+    <h1>{% if producto %}Editar producto{% else %}Nuevo producto{% endif %}</h1>
+    <p class="lead">Completa los datos y elige la categoría del catálogo.</p>
+  </div>
+  <a class="btn btn-ghost" href="/productos">← Volver al listado</a>
+</div>
 
 <form class="form-grid" action="{{ action }}" method="{{ method }}">
   <div>
@@ -8,8 +14,12 @@
     <input id="nombre" name="nombre" required maxlength="200" value="{{ producto.nombre if producto else '' }}">
   </div>
   <div>
-    <label for="categoria">Categoría</label>
-    <input id="categoria" name="categoria" maxlength="100" value="{{ producto.categoria if producto else 'General' }}">
+    <label for="category_id">Categoría</label>
+    <select id="category_id" name="category_id" required>
+      {% for c in categorias %}
+      <option value="{{ c.id }}" {% if producto and producto.category_id == c.id %}selected{% endif %}>{{ c.nombre }}</option>
+      {% endfor %}
+    </select>
   </div>
   <div>
     <label for="precio">Precio (€)</label>

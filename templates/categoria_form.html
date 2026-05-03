@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{% if categoria %}Editar categoría{% else %}Nueva categoría{% endif %}</h1>
+    <p class="lead">El nombre debe ser único en el sistema.</p>
+  </div>
+  <a class="btn btn-ghost" href="/categorias">← Volver</a>
+</div>
+
+<form class="form-grid" action="{{ action }}" method="{{ method }}">
+  <div>
+    <label for="nombre">Nombre</label>
+    <input id="nombre" name="nombre" required maxlength="100" value="{{ categoria.nombre if categoria else '' }}">
+  </div>
+  <div>
+    <label for="descripcion">Descripción</label>
+    <textarea id="descripcion" name="descripcion" maxlength="500" placeholder="Opcional">{{ categoria.descripcion if categoria else '' }}</textarea>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a class="btn btn-ghost" href="/categorias">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

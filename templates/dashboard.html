@@ -1,24 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 style="margin-top:0;font-size:1.5rem;">Dashboard</h1>
-<p class="muted">Resumen del inventario</p>
+<div class="page-head">
+  <div>
+    <h1>Dashboard</h1>
+    <p class="lead">Resumen del inventario y accesos rápidos.</p>
+  </div>
+  <div class="row-actions">
+    <a class="btn btn-primary" href="/productos/nuevo">+ Nuevo producto</a>
+    <a class="btn btn-ghost" href="/categorias/nueva">+ Categoría</a>
+  </div>
+</div>
 
 <div class="cards">
-  <div class="card">
+  <div class="card card--accent">
     <h3>Productos</h3>
     <div class="value">{{ total_productos }}</div>
   </div>
   <div class="card">
+    <h3>Categorías</h3>
+    <div class="value">{{ total_categorias }}</div>
+  </div>
+  <div class="card">
     <h3>Stock bajo (&lt;5)</h3>
-    <div class="value" style="{% if stock_bajo %}color: #ffb86b{% endif %}">{{ stock_bajo }}</div>
+    <div class="value" style="{% if stock_bajo %}color: var(--warn){% endif %}">{{ stock_bajo }}</div>
   </div>
   <div class="card">
     <h3>Valor inventario</h3>
-    <div class="value" style="font-size:1.25rem;">{{ "%.2f"|format(valor_inventario|float) }} €</div>
+    <div class="value" style="font-size:1.3rem;">{{ "%.2f"|format(valor_inventario|float) }} €</div>
   </div>
 </div>
 
-<h2 style="font-size:1.1rem;margin-bottom:0.75rem;">Últimos productos</h2>
+<h2 style="font-size:1.15rem;margin-bottom:0.85rem;font-weight:600;">Últimos productos</h2>
 {% if productos_recientes %}
 <table>
   <thead>
@@ -33,21 +45,24 @@
   <tbody>
     {% for p in productos_recientes %}
     <tr>
-      <td>{{ p.nombre }}</td>
-      <td>{{ p.categoria }}</td>
+      <td><strong>{{ p.nombre }}</strong></td>
+      <td><span class="badge">{{ p.categoria.nombre }}</span></td>
       <td>{{ "%.2f"|format(p.precio|float) }} €</td>
       <td>
         {{ p.stock }}
-        {% if p.stock < 5 %}<span class="badge-low">(bajo)</span>{% endif %}
+        {% if p.stock < 5 %}<span class="badge-low"> · bajo</span>{% endif %}
       </td>
       <td class="row-actions">
-        <a href="/productos/{{ p.id }}/editar">Editar</a>
+        <a class="btn btn-ghost btn-sm" href="/productos/{{ p.id }}/editar">Editar</a>
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% else %}
-<p class="muted">No hay productos. <a href="/productos/nuevo">Crear el primero</a>.</p>
+<div class="empty-state">
+  <p>No hay productos todavía.</p>
+  <p style="margin-top:0.75rem;"><a class="btn btn-primary" href="/productos/nuevo">Crear el primero</a></p>
+</div>
 {% endif %}
 {% endblock %}

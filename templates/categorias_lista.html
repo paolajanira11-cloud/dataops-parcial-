@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Categorías</h1>
+    <p class="lead">Organiza el catálogo. No puedes borrar una categoría si tiene productos asignados.</p>
+  </div>
+  <a class="btn btn-primary" href="/categorias/nueva">+ Nueva categoría</a>
+</div>
+
+{% if categorias_conteo %}
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Productos</th>
+      <th style="min-width:160px;">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c, n in categorias_conteo %}
+    <tr>
+      <td><strong>{{ c.nombre }}</strong></td>
+      <td class="muted">{{ c.descripcion or '—' }}</td>
+      <td>{{ n }}</td>
+      <td class="row-actions">
+        <a class="btn btn-ghost btn-sm" href="/categorias/{{ c.id }}/editar">Editar</a>
+        <form class="inline" action="/categorias/{{ c.id }}/eliminar" method="post" onsubmit="return confirm('¿Eliminar esta categoría?');">
+          <button type="submit" class="btn btn-danger btn-sm" {% if n > 0 %}disabled title="Quita primero los productos de esta categoría"{% endif %}>Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+  <p>No hay categorías (inesperado: debería existir «General»).</p>
+</div>
+{% endif %}
+{% endblock %}
