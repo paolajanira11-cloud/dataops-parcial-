@@ -9,29 +9,34 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0e12;
-      --bg-elevated: #12151c;
-      --surface: #181c26;
-      --surface-hover: #1e2430;
-      --border: #2a3142;
-      --text: #eef1f7;
-      --muted: #8b95a8;
-      --accent: #6366f1;
-      --accent-soft: rgba(99, 102, 241, 0.15);
-      --accent-hover: #818cf8;
+      --bg: #070b14;
+      --bg-elevated: #0f172a;
+      --surface: #111c32;
+      --surface-hover: #182743;
+      --border: #263758;
+      --text: #e8eef9;
+      --muted: #9baccc;
+      --accent: #4f8cff;
+      --accent-soft: rgba(79, 140, 255, 0.2);
+      --accent-hover: #7bb0ff;
       --danger: #f43f5e;
       --danger-soft: rgba(244, 63, 94, 0.12);
       --ok: #34d399;
       --warn: #fbbf24;
+      --info: #38bdf8;
       --radius: 12px;
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      --shadow: 0 10px 35px rgba(4, 10, 22, 0.45);
+      --shadow-soft: 0 4px 18px rgba(4, 10, 22, 0.28);
       --sidebar-w: 220px;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "DM Sans", system-ui, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(1000px 500px at 15% -20%, rgba(79, 140, 255, 0.22), transparent 60%),
+        radial-gradient(900px 420px at 90% -15%, rgba(56, 189, 248, 0.15), transparent 62%),
+        var(--bg);
       color: var(--text);
       line-height: 1.55;
       min-height: 100vh;
@@ -50,7 +55,7 @@
       width: min(100%, var(--sidebar-w));
       max-width: var(--sidebar-w);
       flex-shrink: 0;
-      background: var(--bg-elevated);
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(11, 18, 34, 0.95));
       border-right: 1px solid var(--border);
       padding: 1.25rem 0;
       position: sticky;
@@ -87,13 +92,14 @@
       font-size: 0.9rem;
     }
     .nav a:hover {
-      background: var(--surface-hover);
+      background: linear-gradient(90deg, rgba(79, 140, 255, 0.15), rgba(79, 140, 255, 0.02));
       color: var(--text);
       text-decoration: none;
     }
     .nav a.active {
-      background: var(--accent-soft);
+      background: linear-gradient(90deg, rgba(79, 140, 255, 0.25), rgba(79, 140, 255, 0.05));
       color: var(--accent-hover);
+      border: 1px solid rgba(123, 176, 255, 0.28);
     }
     .main {
       flex: 1;
@@ -128,7 +134,8 @@
       border-radius: var(--radius);
       margin-bottom: 1.25rem;
       font-size: 0.9rem;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(123, 176, 255, 0.22);
+      box-shadow: var(--shadow-soft);
       animation: toast-in 0.35s ease;
     }
     @keyframes toast-in {
@@ -150,21 +157,36 @@
       border: none;
       cursor: pointer;
       text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
     }
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      background: linear-gradient(135deg, var(--accent), #2563eb);
       color: #fff;
-      box-shadow: var(--shadow);
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
     }
-    .btn-primary:hover { filter: brightness(1.08); color: #fff; text-decoration: none; }
+    .btn-primary:hover { filter: brightness(1.06); color: #fff; text-decoration: none; transform: translateY(-1px); }
     .btn-ghost {
-      background: var(--surface);
+      background: rgba(17, 28, 50, 0.8);
       color: var(--muted);
       border: 1px solid var(--border);
     }
-    .btn-ghost:hover { color: var(--text); border-color: var(--muted); background: var(--surface-hover); text-decoration: none; }
+    .btn-ghost:hover { color: var(--text); border-color: rgba(123, 176, 255, 0.35); background: var(--surface-hover); text-decoration: none; transform: translateY(-1px); }
     .btn-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.35); }
-    .btn-danger:hover { background: var(--danger); color: #fff; text-decoration: none; }
+    .btn-danger:hover { background: var(--danger); color: #fff; text-decoration: none; transform: translateY(-1px); }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      filter: grayscale(0.2);
+      transform: none;
+    }
+    .btn:focus-visible,
+    .nav a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--accent-hover);
+      outline-offset: 2px;
+    }
     .btn-sm { padding: 0.35rem 0.65rem; font-size: 0.8rem; }
     .cards {
       display: grid;
@@ -174,12 +196,14 @@
       justify-items: stretch;
     }
     .card {
-      background: var(--surface);
+      background: linear-gradient(150deg, rgba(17, 28, 50, 0.95), rgba(14, 23, 42, 0.95));
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 1.15rem 1.25rem;
       box-shadow: var(--shadow);
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
+    .card:hover { transform: translateY(-2px); border-color: rgba(123, 176, 255, 0.3); }
     .card h3 {
       margin: 0 0 0.4rem;
       font-size: 0.72rem;
@@ -189,7 +213,7 @@
       font-weight: 600;
     }
     .card .value { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
-    .card--accent { border-color: rgba(99, 102, 241, 0.35); background: linear-gradient(145deg, var(--surface), rgba(99, 102, 241, 0.06)); }
+    .card--accent { border-color: rgba(79, 140, 255, 0.45); background: linear-gradient(145deg, rgba(17, 28, 50, 1), rgba(79, 140, 255, 0.18)); }
     .table-scroll {
       width: 100%;
       max-width: 100%;
@@ -200,7 +224,7 @@
       margin: 0 auto 1rem;
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
-      background: var(--surface);
+      background: linear-gradient(180deg, rgba(17, 28, 50, 0.95), rgba(13, 22, 40, 0.95));
     }
     .table-scroll table {
       width: 100%;
@@ -213,7 +237,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: var(--surface);
+      background: linear-gradient(180deg, rgba(17, 28, 50, 0.98), rgba(13, 22, 40, 0.98));
       border-radius: var(--radius);
       overflow: hidden;
       border: 1px solid var(--border);
@@ -225,11 +249,12 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--muted);
-      background: var(--bg-elevated);
+      background: rgba(15, 23, 42, 0.9);
       font-weight: 600;
     }
     tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: rgba(255,255,255,0.02); }
+    tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.015); }
+    tbody tr:hover td { background: rgba(79, 140, 255, 0.1); }
     .muted { color: var(--muted); font-size: 0.9rem; }
     .row-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
     form.inline { display: inline; }
@@ -247,9 +272,10 @@
       padding: 0.6rem 0.75rem;
       border-radius: 9px;
       border: 1px solid var(--border);
-      background: var(--bg);
+      background: rgba(7, 11, 20, 0.75);
       color: var(--text);
       font: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
     input:focus, textarea:focus, select:focus {
       outline: none;
@@ -259,7 +285,20 @@
     textarea { min-height: 110px; resize: vertical; }
     .form-actions { display: flex; gap: 0.75rem; margin-top: 0.25rem; flex-wrap: wrap; }
     .badge-low { color: var(--warn); font-size: 0.78rem; font-weight: 600; }
-    .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; background: var(--accent-soft); color: var(--accent-hover); }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.52rem;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: var(--accent-soft);
+      color: var(--accent-hover);
+      border: 1px solid rgba(123, 176, 255, 0.2);
+    }
+    .badge-success { background: rgba(52, 211, 153, 0.14); color: #6ee7b7; border-color: rgba(52, 211, 153, 0.25); }
+    .badge-warn { background: rgba(251, 191, 36, 0.14); color: #fcd34d; border-color: rgba(251, 191, 36, 0.25); }
+    .badge-info { background: rgba(56, 189, 248, 0.14); color: #7dd3fc; border-color: rgba(56, 189, 248, 0.25); }
     .empty-state {
       text-align: center;
       padding: 2.5rem 1.5rem;
@@ -358,12 +397,13 @@
         <a href="/" class="{{ 'active' if path == '/' else '' }}">Dashboard</a>
         <a href="/productos" class="{{ 'active' if path.startswith('/productos') else '' }}">Productos</a>
         <a href="/categorias" class="{{ 'active' if path.startswith('/categorias') else '' }}">Categorías</a>
+        <a href="/kardex" class="{{ 'active' if path.startswith('/kardex') else '' }}">Kardex</a>
       </nav>
     </aside>
     <div class="main">
       <div class="main-inner">
         {% if toast %}
-          {% if toast in ['producto_creado','producto_actualizado','producto_eliminado','categoria_creada','categoria_actualizada','categoria_eliminada'] %}
+          {% if toast in ['producto_creado','producto_actualizado','producto_eliminado','categoria_creada','categoria_actualizada','categoria_eliminada','kardex_creado'] %}
             <div class="toast toast--ok">
               {% if toast == 'producto_creado' %}Producto creado correctamente.
               {% elif toast == 'producto_actualizado' %}Producto actualizado.
@@ -371,12 +411,14 @@
               {% elif toast == 'categoria_creada' %}Categoría creada.
               {% elif toast == 'categoria_actualizada' %}Categoría actualizada.
               {% elif toast == 'categoria_eliminada' %}Categoría eliminada.
+              {% elif toast == 'kardex_creado' %}Movimiento de kardex registrado.
               {% endif %}
             </div>
-          {% elif toast in ['categoria_en_uso','categoria_duplicada'] %}
+          {% elif toast in ['categoria_en_uso','categoria_duplicada','kardex_stock_insuficiente'] %}
             <div class="toast toast--warn">
               {% if toast == 'categoria_en_uso' %}No se puede eliminar: hay productos usando esta categoría.
               {% elif toast == 'categoria_duplicada' %}Ya existe una categoría con ese nombre.
+              {% elif toast == 'kardex_stock_insuficiente' %}No hay stock suficiente para registrar esta salida.
               {% endif %}
             </div>
           {% endif %}

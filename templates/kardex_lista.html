@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Kardex</h1>
+    <p class="lead">Historial de movimientos de inventario por producto.</p>
+  </div>
+  <a class="btn btn-primary" href="/kardex/nuevo">+ Nuevo movimiento</a>
+</div>
+
+{% if movimientos %}
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Producto</th>
+      <th>Tipo</th>
+      <th>Cantidad</th>
+      <th>Stock (antes -> despues)</th>
+      <th>Observacion</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for m in movimientos %}
+    <tr>
+      <td>{{ m.fecha_movimiento.strftime('%Y-%m-%d %H:%M') }}</td>
+      <td><strong>{{ m.producto.nombre }}</strong></td>
+      <td>
+        <span class="badge {% if m.tipo_movimiento == 'entrada' %}badge-success{% elif m.tipo_movimiento == 'salida' %}badge-warn{% else %}badge-info{% endif %}">
+          {{ m.tipo_movimiento|capitalize }}
+        </span>
+      </td>
+      <td>{{ m.cantidad }}</td>
+      <td>{{ m.stock_anterior }} -> {{ m.stock_resultante }}</td>
+      <td>{{ m.observacion if m.observacion else '-' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="empty-state">
+  <p>No hay movimientos en kardex.</p>
+  <p style="margin-top:0.75rem;"><a class="btn btn-primary" href="/kardex/nuevo">Registrar el primero</a></p>
+</div>
+{% endif %}
+{% endblock %}
