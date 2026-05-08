@@ -358,12 +358,13 @@
         <a href="/" class="{{ 'active' if path == '/' else '' }}">Dashboard</a>
         <a href="/productos" class="{{ 'active' if path.startswith('/productos') else '' }}">Productos</a>
         <a href="/categorias" class="{{ 'active' if path.startswith('/categorias') else '' }}">Categorías</a>
+        <a href="/kardex" class="{{ 'active' if path.startswith('/kardex') else '' }}">Kardex</a>
       </nav>
     </aside>
     <div class="main">
       <div class="main-inner">
         {% if toast %}
-          {% if toast in ['producto_creado','producto_actualizado','producto_eliminado','categoria_creada','categoria_actualizada','categoria_eliminada'] %}
+          {% if toast in ['producto_creado','producto_actualizado','producto_eliminado','categoria_creada','categoria_actualizada','categoria_eliminada','kardex_creado'] %}
             <div class="toast toast--ok">
               {% if toast == 'producto_creado' %}Producto creado correctamente.
               {% elif toast == 'producto_actualizado' %}Producto actualizado.
@@ -371,12 +372,14 @@
               {% elif toast == 'categoria_creada' %}Categoría creada.
               {% elif toast == 'categoria_actualizada' %}Categoría actualizada.
               {% elif toast == 'categoria_eliminada' %}Categoría eliminada.
+              {% elif toast == 'kardex_creado' %}Movimiento de kardex registrado.
               {% endif %}
             </div>
-          {% elif toast in ['categoria_en_uso','categoria_duplicada'] %}
+          {% elif toast in ['categoria_en_uso','categoria_duplicada','kardex_stock_insuficiente'] %}
             <div class="toast toast--warn">
               {% if toast == 'categoria_en_uso' %}No se puede eliminar: hay productos usando esta categoría.
               {% elif toast == 'categoria_duplicada' %}Ya existe una categoría con ese nombre.
+              {% elif toast == 'kardex_stock_insuficiente' %}No hay stock suficiente para registrar esta salida.
               {% endif %}
             </div>
           {% endif %}

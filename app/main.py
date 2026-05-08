@@ -10,7 +10,7 @@ from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
 from app.database import engine, get_session, init_db
-from app.models import Category, Product
+from app.models import Category, Kardex, Product
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
@@ -50,6 +50,15 @@ def _categorias(session: Session) -> list[Category]:
 
 def _productos_con_categoria(session: Session) -> list[Product]:
     stmt = select(Product).options(selectinload(Product.categoria)).order_by(Product.nombre)
+    return session.exec(stmt).all()
+
+
+def _kardex_con_producto(session: Session) -> list[Kardex]:
+    stmt = (
+        select(Kardex)
+        .options(selectinload(Kardex.producto))
+        .order_by(Kardex.fecha_movimiento.desc(), Kardex.id.desc())
+    )
     return session.exec(stmt).all()
 
 
@@ -296,5 +305,78 @@ def eliminar_categoria(categoria_id: int, session: SessionDep):
     session.commit()
     return RedirectResponse(
         url="/categorias?toast=categoria_eliminada",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+# --- Kardex ---
+
+
+@app.get("/kardex", response_class=HTMLResponse)
+def listar_kardex(request: Request, session: SessionDep):
+    movimientos = _kardex_con_producto(session)
+    return templates.TemplateResponse(
+        request,
+        "kardex_lista.html",
+        {"title": "Kardex", "movimientos": movimientos},
+    )
+
+
+@app.get("/kardex/nuevo", response_class=HTMLResponse)
+def form_nuevo_movimiento(request: Request, session: SessionDep):
+    return templates.TemplateResponse(
+        request,
+        "kardex_form.html",
+        {
+            "title": "Nuevo movimiento de kardex",
+            "productos": _productos_con_categoria(session),
+        },
+    )
+
+
+@app.post("/kardex", response_class=HTMLResponse)
+def crear_movimiento_kardex(
+    session: SessionDep,
+    product_id: Annotated[int, Form()],
+    tipo_movimiento: Annotated[str, Form()],
+    cantidad: Annotated[int, Form()],
+    observacion: Annotated[str, Form()] = "",
+):
+    producto = session.get(Product, product_id)
+    if not producto:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    if cantidad <= 0:
+        raise HTTPException(status_code=422, detail="La cantidad debe ser mayor a cero")
+    tipo = tipo_movimiento.strip().lower()
+    if tipo not in {"entrada", "salida", "ajuste"}:
+        raise HTTPException(status_code=422, detail="Tipo de movimiento no válido")
+
+    stock_anterior = max(0, producto.stock)
+    if tipo == "entrada":
+        stock_resultante = stock_anterior + cantidad
+    elif tipo == "salida":
+        if cantidad > stock_anterior:
+            return RedirectResponse(
+                url="/kardex/nuevo?toast=kardex_stock_insuficiente",
+                status_code=status.HTTP_303_SEE_OTHER,
+            )
+        stock_resultante = stock_anterior - cantidad
+    else:
+        stock_resultante = cantidad
+
+    movimiento = Kardex(
+        product_id=producto.id,
+        tipo_movimiento=tipo,
+        cantidad=cantidad,
+        stock_anterior=stock_anterior,
+        stock_resultante=stock_resultante,
+        observacion=observacion.strip(),
+    )
+    producto.stock = stock_resultante
+    session.add(movimiento)
+    session.add(producto)
+    session.commit()
+    return RedirectResponse(
+        url="/kardex?toast=kardex_creado",
         status_code=status.HTTP_303_SEE_OTHER,
     )

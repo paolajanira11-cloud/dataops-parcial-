@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional
 
@@ -21,3 +22,17 @@ class Product(SQLModel, table=True):
     category_id: int = Field(foreign_key="category.id")
 
     categoria: Category = Relationship(back_populates="productos")
+    movimientos_kardex: List["Kardex"] = Relationship(back_populates="producto")
+
+
+class Kardex(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    product_id: int = Field(foreign_key="product.id", index=True)
+    tipo_movimiento: str = Field(max_length=20)
+    cantidad: int = Field(gt=0)
+    stock_anterior: int = Field(ge=0)
+    stock_resultante: int = Field(ge=0)
+    observacion: str = Field(default="", max_length=500)
+    fecha_movimiento: datetime = Field(default_factory=datetime.utcnow, index=True)
+
+    producto: Product = Relationship(back_populates="movimientos_kardex")

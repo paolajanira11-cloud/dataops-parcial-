@@ -123,3 +123,78 @@ def test_eliminar_categoria_vacia(client):
     assert r.status_code == 303
     loc = r.headers.get("location", "")
     assert urlparse(loc).path == "/categorias"
+
+
+def test_registrar_movimiento_kardex_entrada(client):
+    gid = _general_id(client)
+    client.post(
+        "/productos",
+        data={
+            "nombre": "Mouse",
+            "precio": "20",
+            "stock": "5",
+            "category_id": str(gid),
+            "descripcion": "",
+        },
+    )
+    from sqlmodel import Session, select
+
+    from app.database import engine
+    from app.models import Product
+
+    with Session(engine) as session:
+        prod = session.exec(select(Product).where(Product.nombre == "Mouse")).first()
+        pid = int(prod.id)
+
+    r = client.post(
+        "/kardex",
+        data={
+            "product_id": str(pid),
+            "tipo_movimiento": "entrada",
+            "cantidad": "3",
+            "observacion": "Ingreso inicial",
+        },
+        follow_redirects=False,
+    )
+    assert r.status_code == 303
+    assert "toast=kardex_creado" in (r.headers.get("location") or "")
+
+    r2 = client.get("/kardex")
+    assert r2.status_code == 200
+    assert "Mouse" in r2.text
+    assert "Entrada" in r2.text
+
+
+def test_kardex_salida_sin_stock_redirige_con_warn(client):
+    gid = _general_id(client)
+    client.post(
+        "/productos",
+        data={
+            "nombre": "Webcam",
+            "precio": "100",
+            "stock": "2",
+            "category_id": str(gid),
+            "descripcion": "",
+        },
+    )
+    from sqlmodel import Session, select
+
+    from app.database import engine
+    from app.models import Product
+
+    with Session(engine) as session:
+        prod = session.exec(select(Product).where(Product.nombre == "Webcam")).first()
+        pid = int(prod.id)
+
+    r = client.post(
+        "/kardex",
+        data={
+            "product_id": str(pid),
+            "tipo_movimiento": "salida",
+            "cantidad": "9",
+            "observacion": "Demasiado",
+        },
+        follow_redirects=False,
+    )
+    assert r.status_code == 303
+    assert "kardex_stock_insuficiente" in (r.headers.get("location") or "")

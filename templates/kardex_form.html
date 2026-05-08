@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Nuevo movimiento de kardex</h1>
+    <p class="lead">Registra entradas, salidas o ajustes de inventario.</p>
+  </div>
+  <a class="btn btn-ghost" href="/kardex">← Volver al kardex</a>
+</div>
+
+<form class="form-grid" action="/kardex" method="post">
+  <div>
+    <label for="product_id">Producto</label>
+    <select id="product_id" name="product_id" required>
+      {% for p in productos %}
+      <option value="{{ p.id }}">{{ p.nombre }} (stock actual: {{ p.stock }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label for="tipo_movimiento">Tipo de movimiento</label>
+    <select id="tipo_movimiento" name="tipo_movimiento" required>
+      <option value="entrada">Entrada</option>
+      <option value="salida">Salida</option>
+      <option value="ajuste">Ajuste</option>
+    </select>
+  </div>
+  <div>
+    <label for="cantidad">Cantidad</label>
+    <input id="cantidad" name="cantidad" type="number" min="1" step="1" required value="1">
+  </div>
+  <div>
+    <label for="observacion">Observación</label>
+    <textarea id="observacion" name="observacion" maxlength="500" placeholder="Opcional"></textarea>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Guardar movimiento</button>
+    <a class="btn btn-ghost" href="/kardex">Cancelar</a>
+  </div>
+</form>
+{% endblock %}
